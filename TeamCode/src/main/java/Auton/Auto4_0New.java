@@ -33,50 +33,50 @@ public class Auto4_0New extends OpMode {
      * This visualizer is very easy to use to find and create paths/pathchains/poses: <https://pedro-path-generator.vercel.app/>
      * Lets assume our robot is 18 by 18 inches
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
-
+    private double intialx=7.5,intialy=59;
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(7, 59, Math.toRadians(0));
+    private final Pose startPose = new Pose(intialx, intialy, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
-    private final Pose scorePreLoadPose = new Pose(41, 69, Math.toRadians(0));
+    private final Pose scorePreLoadPose = new Pose(30+intialx, 10.78+intialy, Math.toRadians(0));
 
     private final Pose pickupControlPose = new Pose(20, 51, Math.toRadians(0));
 
-    private final Pose middlePose = new Pose(28, 35, Math.toRadians(0));
+    private final Pose middlePose = new Pose(30+intialx, -25+intialy, Math.toRadians(6));
 
     /** Lowest (First) Sample from the Spike Mark */
-    private final Pose push1Pose = new Pose(59, 24, Math.toRadians(0));
+    private final Pose push1Pose = new Pose(48+intialx, -36.12+intialy, Math.toRadians(0));
     private final Pose push1ControlPose = new Pose(71, 37, Math.toRadians(0));
 
     /** Middle (Second) Sample from the Spike Mark */
-    private final Pose push2Pose = new Pose(59, 14, Math.toRadians(0));
+    private final Pose push2Pose = new Pose(48+intialx, -46.01+intialy, Math.toRadians(0));
     private final Pose push2ControlPose = new Pose(71, 33, Math.toRadians(0));
 
     /** Highest (Third) Sample from the Spike Mark */
-    private final Pose push3Pose = new Pose(59, 7, Math.toRadians(0));
+    private final Pose push3Pose = new Pose(48+intialx, -50.2854+intialy, Math.toRadians(0));
     private final Pose push3ControlPose = new Pose(65, 25, Math.toRadians(0));
 
-    private final Pose dropOffPose = new Pose(6, 22, Math.toRadians(0));
+    private final Pose dropOffPose = new Pose(12.966+intialx, -38.36+intialy, Math.toRadians(0));
 
-    private final Pose dropOff2Pose = new Pose(18, 7, Math.toRadians(0));
+    private final Pose dropOff2Pose = new Pose(10+intialx, -50.2854+intialy, Math.toRadians(0));
 
-    private final Pose intakePose = new Pose(10, 29, Math.toRadians(0));
+    private final Pose intakePose = new Pose(2+intialx, -33.874+intialy, Math.toRadians(0));
 
-    private final Pose intake2Pose = new Pose(10, 7, Math.toRadians(0));
+    private final Pose intake2Pose = new Pose(3+intialx, -50.2854+intialy, Math.toRadians(0));
 
     private final Pose intakeControlPose = new Pose(21, 53, Math.toRadians(0));
 
-    private final Pose intakePausePose = new Pose(18, 29, Math.toRadians(0));
+    private final Pose intakePausePose = new Pose(10+intialx, -33.874+intialy, Math.toRadians(0));
 
-    private final Pose scoreControlPose = new Pose(15, 57, Math.toRadians(0));
+    private final Pose scoreControlPose = new Pose(11, 70, Math.toRadians(0));
 
-    private final Pose scoreControl2Pose = new Pose(37, 43, Math.toRadians(0));
+    private final Pose scoreControl2Pose = new Pose(17, 58, Math.toRadians(0));
 
-    private final Pose scorePose = new Pose(41, 65, Math.toRadians(0));
+    private final Pose scorePose = new Pose(30.422+intialx, 7.83+intialy, Math.toRadians(0));
 
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
-    private PathChain scorePreload, midPoint, grabPickup1, dragPickup1, grabPickup2, dragPickup2, grabPickup3, dragPickup3, intakeScooch2 ,intakeScooch, intakePickup1, intakePickup2, scorePickup1, scorePickup2,park;
+    private PathChain scorePreload, grabPickup1, dragPickup1, grabPickup2, dragPickup2, grabPickup3, dragPickup3, intakeScooch2 ,intakeScooch, intakePickup,intakePickup2, scorePickup1, scorePickup2,park;
 
     public void buildPaths() {
 
@@ -105,51 +105,79 @@ public class Auto4_0New extends OpMode {
         scorePreload = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(startPose), new Point(scorePreLoadPose)))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scorePreLoadPose.getHeading())
+                .addParametricCallback(.8,() -> follower.setMaxPower(.7))
                 .build();
 
-        midPoint = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scorePreLoadPose), /* Control Point */ new Point(pickupControlPose), new Point(middlePose)))
-                .setLinearHeadingInterpolation(scorePreLoadPose.getHeading(), middlePose.getHeading())
-                .build();
 
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+//        grabPickup1 = follower.pathBuilder()
+//                .addPath(new BezierCurve(new Point(scorePreLoadPose), /* Control Point */ new Point(pickupControlPose), new Point(middlePose)))
+//                .setLinearHeadingInterpolation(scorePreLoadPose.getHeading(), middlePose.getHeading())
+//                .addPath(new BezierCurve(new Point(middlePose), /* Control Point */ new Point(push1ControlPose), new Point(push1Pose)))
+//                .setLinearHeadingInterpolation(middlePose.getHeading(), push1Pose.getHeading())
+//                .addParametricCallback(.8,() -> follower.setMaxPower(.3))
+//                .build();
+
         grabPickup1 = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(scorePreLoadPose), /* Control Point */ new Point(pickupControlPose), new Point(middlePose)))
+                .setLinearHeadingInterpolation(scorePreLoadPose.getHeading(), middlePose.getHeading())
                 .addPath(new BezierCurve(new Point(middlePose), /* Control Point */ new Point(push1ControlPose), new Point(push1Pose)))
                 .setLinearHeadingInterpolation(middlePose.getHeading(), push1Pose.getHeading())
+                .addParametricCallback(.0,() -> follower.setMaxPower(1))
+                .addParametricCallback(.8,() -> follower.setMaxPower(.3))
+
+                .addPath(new BezierLine(new Point(push1Pose), new Point(dropOffPose)))
+                .setLinearHeadingInterpolation(push1Pose.getHeading(), dropOffPose.getHeading())
+                .addParametricCallback(.0,() -> follower.setMaxPower(1))
+                .addParametricCallback(.8,() -> follower.setMaxPower(.3))
+
+                .addPath(new BezierCurve(new Point(dropOffPose), /* Control Point */ new Point(push2ControlPose) , new Point(push2Pose)))
+                .setLinearHeadingInterpolation(dropOffPose.getHeading(), push2Pose.getHeading())
+                .addParametricCallback(.0,() -> follower.setMaxPower(1))
+                .addParametricCallback(.8,() -> follower.setMaxPower(.35))
+
+                .addPath(new BezierLine(new Point(push2Pose), new Point(dropOffPose)))
+                .setLinearHeadingInterpolation(push2Pose.getHeading(), dropOffPose.getHeading())
+                .addParametricCallback(.0,() -> follower.setMaxPower(1))
+                .addParametricCallback(.6,() -> follower.setMaxPower(.2))
                 .build();
 
         dragPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(push1Pose), new Point(dropOffPose)))
                 .setLinearHeadingInterpolation(push1Pose.getHeading(), dropOffPose.getHeading())
+                .addParametricCallback(.8,() -> follower.setMaxPower(.3))
                 .build();
 
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(dropOffPose), /* Control Point */ new Point(push2ControlPose) , new Point(push2Pose)))
                 .setLinearHeadingInterpolation(dropOffPose.getHeading(), push2Pose.getHeading())
+                .addParametricCallback(.8,() -> follower.setMaxPower(.35))
                 .build();
 
         dragPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(push2Pose), new Point(dropOffPose)))
                 .setLinearHeadingInterpolation(push2Pose.getHeading(), dropOffPose.getHeading())
+                .addParametricCallback(.6,() -> follower.setMaxPower(.2))
                 .build();
 
-        grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(dropOffPose), /* Control Point */ new Point(push3ControlPose) ,new Point(push3Pose)))
-                .setLinearHeadingInterpolation(dropOffPose.getHeading(), push3Pose.getHeading())
-                .build();
+//        grabPickup3 = follower.pathBuilder()
+//                .addPath(new BezierCurve(new Point(dropOffPose), /* Control Point */ new Point(push3ControlPose) ,new Point(push3Pose)))
+//                .setLinearHeadingInterpolation(dropOffPose.getHeading(), push3Pose.getHeading())
+//                .build();
+//
+//        dragPickup3 = follower.pathBuilder()
+//                .addPath(new BezierLine(new Point(push3Pose), new Point(dropOff2Pose)))
+//                .setLinearHeadingInterpolation(push3Pose.getHeading(), dropOff2Pose.getHeading())
+//                .build();
 
-        dragPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(push3Pose), new Point(dropOff2Pose)))
-                .setLinearHeadingInterpolation(push3Pose.getHeading(), dropOff2Pose.getHeading())
-                .build();
 
-        intakePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(dropOff2Pose), new Point(intakePausePose)))
-                .setLinearHeadingInterpolation(dropOff2Pose.getHeading(), intakePausePose.getHeading())
-                .build();
-        intakeScooch2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(dropOff2Pose), new Point(intake2Pose)))
-                .setLinearHeadingInterpolation(dropOff2Pose.getHeading(), intake2Pose.getHeading())
+//        intakeScooch2 = follower.pathBuilder()
+//                .addPath(new BezierLine(new Point(dropOff2Pose), new Point(intake2Pose)))
+//                .setLinearHeadingInterpolation(dropOff2Pose.getHeading(), intake2Pose.getHeading())
+//                .build();
+        intakePickup = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(dropOffPose), new Point(intakePausePose)))
+                .setLinearHeadingInterpolation(dropOffPose.getHeading(), intakePausePose.getHeading())
                 .build();
 
         intakeScooch = follower.pathBuilder()
@@ -159,26 +187,35 @@ public class Auto4_0New extends OpMode {
 // This code doesn't work? It gets 5 big booms. BOOM BOOM BOOM BOOM BOOM
         /* This is our scorePickup PathChain. We are using a single path with a BezierLine, which is a straight line. */
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(intakePose), /* Control Point */ new Point(scoreControlPose),  new Point(scoreControl2Pose) , new Point(scorePose)))
+                .addPath(new BezierCurve(new Point(intakePose), /* Control Point */ new Point(scoreControlPose), new Point(scorePose)))
                 .setLinearHeadingInterpolation(intakePose.getHeading(), scorePose.getHeading())
                 .build();
-        scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(intake2Pose), /* Control Point */ new Point(scoreControlPose),  new Point(scoreControl2Pose) , new Point(scorePose)))
-                .setLinearHeadingInterpolation(intake2Pose.getHeading(), scorePose.getHeading())
-                .build();
+
 
         intakePickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(scorePose), /* Control Point */ new Point(intakeControlPose), new Point(intakePausePose)))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), intakePausePose.getHeading())
+                .addParametricCallback(.7,()->follower.setMaxPower(.3))
                 .build();
 
     }
-
+    private double pow = .8;
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(scorePreload);
-                setPathState(1);
+                robot.pivot.setTargetPosition(1114);
+                robot.slides.setTargetPosition(190);
+                robot.arm.setPosition(.4279);
+                robot.wrist.setPosition(.69);
+                robot.update();
+
+                follower.followPath(scorePreload,true);
+                setPathState(100);
+                break;
+            case 100:
+                if (pathTimer.getElapsedTimeSeconds()>1){
+                    setPathState(1);
+                }
                 break;
             case 1:
 
@@ -191,102 +228,175 @@ public class Auto4_0New extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Preload */
-
+                    robot.pivot.setTargetPosition(1876);
+                    robot.slides.setTargetPosition(0);
+                    robot.arm.setPosition(.24527);
+                    robot.wrist.setPosition(.045);
+                    robot.claw.setPosition(0.6);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup1,true);
-                    setPathState(2);
-                }
-                break;
-            case 2:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-                if(!follower.isBusy()) {
-                    /* Grab Sample */
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(dragPickup1,true);
-                    setPathState(3);
-                }
-                break;
-            case 3:
-                if(!follower.isBusy()) {
-                    follower.followPath(grabPickup2,true);
-                    setPathState(4);
-                }
-                break;
-            case 4:
-                if(!follower.isBusy()) {
-                    follower.followPath(dragPickup2,true);
-                    setPathState(5);
-                }
-                break;
-            case 5:
-                if(!follower.isBusy()) {
-                    follower.followPath(grabPickup3,true);
-                    setPathState(6);
-                }
-                break;
-            case 6:
-                if(!follower.isBusy()) {
-                    follower.followPath(dragPickup3, true);
                     setPathState(7);
                 }
                 break;
+//            case 2:
+//                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+//                if(!follower.isBusy()) {
+//                    /* Grab Sample */
+//
+//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+//                    follower.followPath(dragPickup1,1,true);
+//                    setPathState(3);
+//                }
+//                break;
+//            case 3:
+//                if(!follower.isBusy()) {
+//                    follower.followPath(grabPickup2,1,true);
+//                    setPathState(4);
+//                }
+//                break;
+//            case 4:
+//                if(!follower.isBusy()) {
+//                    follower.followPath(dragPickup2,1,true);
+//                    setPathState(7);
+//                }
+//                break;
             case 7:
                 if(!follower.isBusy()) {
-                    follower.followPath(intakePickup2, true);
+                    follower.followPath(intakePickup,.6,true);
                     setPathState(8);
                 }
                 break;
             case 8:
-                if(!follower.isBusy()) {
-                    follower.followPath(intakeScooch2, true);
+                if(!follower.isBusy()){
+                    follower.followPath(intakeScooch, .4,true);
+                    setPathState(900);
+                }
+                break;
+            case 900:
+                if (!follower.isBusy()&&pathTimer.getElapsedTimeSeconds()>1){
+                    robot.claw.setPosition(.4);
                     setPathState(9);
                 }
                 break;
             case 9:
-                if(!follower.isBusy()) {
-                    follower.followPath(scorePickup2, true); // score pickup 1
+                if(pathTimer.getElapsedTimeSeconds()>.5) {
+                    robot.pivot.setTargetPosition(1114);
+                    robot.slides.setTargetPosition(170);
+                    robot.arm.setPosition(.4279);
+                    robot.wrist.setPosition(.675);
+                    robot.update();
+                    follower.followPath(scorePickup1, 1,true); // score pickup 1
                     setPathState(10);
                 }
                 break;
             case 10:
                 if(!follower.isBusy()) {
-                    follower.followPath(intakePickup1, true); // intake pickup 2
+                    robot.pivot.setTargetPosition(1876);
+                    robot.slides.setTargetPosition(0);
+                    robot.arm.setPosition(.245);
+                    robot.wrist.setPosition(.045);
+//                    robot.claw.setPosition(0.6);
+                    follower.followPath(intakePickup2,1, true); // intake pickup 2
                     setPathState(11);
                 }
                 break;
             case 11:
                 if(!follower.isBusy()) {
-                    follower.followPath(intakeScooch, true); // intake pickup 2
+                    robot.claw.setPosition(0.6);
+                    follower.followPath(intakeScooch,.4, true); // intake pickup 2
+                    setPathState(110);
+                }
+                break;
+            case 110:
+                if (!follower.isBusy()&&pathTimer.getElapsedTimeSeconds()>1){
+                    robot.claw.setPosition(.4);
                     setPathState(12);
                 }
+                break;
             case 12:
-                if(!follower.isBusy()) {
-                    follower.followPath(scorePickup1, true); // score pickup 2
+                if(pathTimer.getElapsedTimeSeconds()>.5) {
+                    robot.pivot.setTargetPosition(1114);
+                    robot.slides.setTargetPosition(170);
+                    robot.arm.setPosition(.4279);
+                    robot.wrist.setPosition(.675);
+                    robot.update();
+                    follower.followPath(scorePickup1, 1,true); // score pickup 2
                     setPathState(13);
                 }
                 break;
             case 13:
                 if(!follower.isBusy()) {
-                    follower.followPath(intakePickup2, true); // intake pickup 3
+                    robot.pivot.setTargetPosition(1876);
+                    robot.slides.setTargetPosition(0);
+                    robot.arm.setPosition(.24527);
+                    robot.wrist.setPosition(.045);
+//                    robot.claw.setPosition(0.6);
+                    follower.followPath(intakePickup2,1,true); // intake pickup 3
                     setPathState(14);
                 }
                 break;
             case 14:
                 if(!follower.isBusy()) {
-                    follower.followPath(intakeScooch, true); // score pickup 3
+                    robot.claw.setPosition(0.6);
+                    follower.followPath(intakeScooch,true); // score pickup 3
+                    setPathState(140);
+                }
+                break;
+            case 140:
+                if (!follower.isBusy()&&pathTimer.getElapsedTimeSeconds()>1){
+                    robot.claw.setPosition(.4);
                     setPathState(15);
                 }
                 break;
             case 15:
-                if(!follower.isBusy()) {
-                    follower.followPath(scorePickup1, true); // score pickup 3
+                if(pathTimer.getElapsedTimeSeconds()>.5) {
+                    robot.pivot.setTargetPosition(1114);
+                    robot.slides.setTargetPosition(170);
+                    robot.arm.setPosition(.4279);
+                    robot.wrist.setPosition(.675);
+                    robot.update();
+                    follower.followPath(scorePickup1, 1,true); // score pickup 2
                     setPathState(16);
                 }
                 break;
             case 16:
                 if(!follower.isBusy()) {
-                    follower.followPath(park, true); // intake pickup 3
+                    robot.pivot.setTargetPosition(1876);
+                    robot.slides.setTargetPosition(0);
+                    robot.arm.setPosition(.24527);
+                    robot.wrist.setPosition(.0);
+                    follower.followPath(intakePickup2,true); // intake pickup
+                    setPathState(17);
+                }
+                break;
+            case 17:
+                if(!follower.isBusy()) {
+                    robot.claw.setPosition(.4);
+                    follower.followPath(intakeScooch,true); // score pickup 4
+                    setPathState(170);
+                }
+                break;
+            case 170:
+                if (!follower.isBusy()&&pathTimer.getElapsedTimeSeconds()>1){
+                    robot.claw.setPosition(.4);
+                    setPathState(18);
+                }
+                break;
+            case 18:
+                if(pathTimer.getElapsedTimeSeconds()>.5) {
+                    robot.pivot.setTargetPosition(1114);
+                    robot.slides.setTargetPosition(205);
+                    robot.arm.setPosition(.4279);
+                    robot.wrist.setPosition(.69);
+                    robot.update();
+                    follower.followPath(scorePickup1, 1,true); // score pickup 2
+                    setPathState(19);
+                }
+                break;
+            case 19:
+                if(!follower.isBusy()) {
+                    follower.followPath(park, true);
                     setPathState(-1);
                 }
                 break;
@@ -307,8 +417,6 @@ public class Auto4_0New extends OpMode {
 
         // These loop the movements of the robot
         follower.update();
-        robot.pivot.setPID(true);
-        robot.slides.setPID(true);
         robot.update();
 
         autonomousPathUpdate();
@@ -318,6 +426,7 @@ public class Auto4_0New extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("slide: ",robot.slides.getCurrentPosition());
         telemetry.update();
     }
 
@@ -342,7 +451,16 @@ public class Auto4_0New extends OpMode {
 
     /** This method is called continuously after Init while waiting for "play". **/
     @Override
-    public void init_loop() {}
+    public void init_loop() {
+        robot.pivot.setPID(true);
+        robot.slides.setPID(true);
+        robot.pivot.setTargetPosition(950);
+        robot.slides.setTargetPosition(30);
+        robot.arm.setPosition(.9);
+        robot.wrist.setPosition(100);
+        robot.claw.setPosition(.3);
+        robot.update();
+    }
 
     /** This method is called once at the start of the OpMode.
      * It runs all the setup actions, including building paths and starting the path system **/

@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -18,13 +19,13 @@ public class Slides implements Subsystem {
     private DcMotor slide2;
     private DcMotorEx slideEncoder;
     private Pivot pivot;
-    public static double kP = 0.037, kI = 0, kD = 0;
+    public static double kP = 0.027, kI = 0.0002, kD = 0.0005;
     public static double kF = 0.0002;
 
-    public static int lowerBound = 0, upperBound = 900;
+    public static int lowerBound = 0, upperBound = 1100;
     private PIDController controller;
     public static int slideTarget = 0;
-    private int slideCurrent = 0;
+    public int slideCurrent = 0;
     private final double ticks_in_degree = 5281.1/360;
     private double control;
     public static boolean isPID=true;
@@ -35,6 +36,8 @@ public class Slides implements Subsystem {
 //        slideEncoder = hardwareMap.get(DcMotorEx.class, "br");
         slide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide1.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide2.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot = new Pivot(hardwareMap);
         controller = new PIDController(kP, kI, kD);
     }
@@ -83,7 +86,7 @@ public class Slides implements Subsystem {
         return slideTarget;
     }
     public void setTargetPosition(int position) {
-        if(pivot.getCurrentPosition()>=1500) {
+        if(pivot.getCurrentPosition()>=1000) {
             slideTarget = Range.clip(position, lowerBound, upperBound);
         }
         else{

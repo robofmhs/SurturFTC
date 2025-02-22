@@ -14,13 +14,13 @@ import com.qualcomm.robotcore.util.Range;
 public class Pivot implements Subsystem {
     private DcMotor pivot;
 //    private Slides slides;
-    public static double kP = 0.001, kI = 0, kD = 0;
+    public static double kP = 0.01, kI = 0, kD = 0.0005;
     public static double kF = 0.0005;
     private InterpLUT kfLUT;
-    public static int lowerBound = 0, upperBound = 2600;
+    public static int lowerBound = 0, upperBound = 1200;
     private PIDController controller;
     public static int pivotTarget = 0;
-    private int pivotCurrent = 0;
+    public int pivotCurrent = 0;
     private final double ticks_in_degree = 5281.1/360;
     public static boolean isPID=true;
     private double control;

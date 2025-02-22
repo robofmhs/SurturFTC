@@ -10,13 +10,14 @@ import com.qualcomm.robotcore.util.Range;
 
 @Config
 public class Hang implements Subsystem{
-    public static double kP = 0, kI = 0, kD = 0;
-    public static double kF=0;
-    public static int lowerBound = 0, upperBound = 1000;
+    public static double kP = 0.01, kI = 0, kD = 0;
+    public static double kF=0.03;
+    public static int lowerBound = -570, upperBound = 5600;
     private PIDController controller;
     public static int hangTarget = 0;
-    private int hangCurrent = 0;
+    public int hangCurrent = 0;
     private final double ticks_in_degree = 5281.1/360;
+
 
 
     private DcMotor hang;
@@ -27,7 +28,6 @@ public class Hang implements Subsystem{
         this.hang = hardwareMap.get(DcMotor.class, "hang");
         controller = new PIDController(kP, kI, kD);
         hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hang.setDirection(DcMotor.Direction.REVERSE);
 
     }
 
